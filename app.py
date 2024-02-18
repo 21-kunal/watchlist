@@ -7,7 +7,8 @@ menu = """Please select one of the following options:
 3) View all movies
 4) Watch a movie
 5) View watched movies.
-6) Exit.
+6) Delete movie.
+7) Exit.
 
 Your selection: """
 welcome = "Welcome to the watchlist app!"
@@ -34,12 +35,23 @@ def print_movies_list(heading, movies_list):
         print("---------\n")
 
 
+def print_watched_movies(username,movies_list):
+    print(f"----{username}'s watched movies-----\n")
+    for row in movies_list:
+        print(f"Title: {row[1]}\n")
+    print(f'---------\n')
+
 def watch_movie():
+    username = input("Username: ")
     title = input("Enter the title of watched movie: ")
-    database.watch_movie(title)
+    database.watch_movie(username, title)
 
 
-while (user_input := input(menu)) != "6":
+def delete_movie():
+    title = input("Enter the title of the movie: ")
+    database.delete_movie(title)
+
+while (user_input := input(menu)) != "7":
     if user_input == "1":
         add_movie()
     elif user_input == "2":
@@ -51,7 +63,10 @@ while (user_input := input(menu)) != "6":
     elif user_input == "4":
         watch_movie()
     elif user_input == "5":
-        movies_list = database.get_watched_movies()
-        print_movies_list("Watched", movies_list)
+        username = input("Username: ")
+        movies_list = database.get_watched_movies(username)
+        print_watched_movies(username, movies_list)
+    elif user_input == "6":
+        delete_movie()
     else:
         print("Invalid input, please try again!")
