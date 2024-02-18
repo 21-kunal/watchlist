@@ -10,22 +10,24 @@ create_movie_table = """ CREATE TABLE IF NOT EXISTS movies(
 );
 """
 
-insert_movies = """ INSERT INTO movies (title,release_timestamp,watched) VALUES (?,?,?);"""
+insert_movies = """ INSERT INTO movies (title,release_timestamp,watched) VALUES (?,?,0);"""
 select_all_movies = """SELECT * FROM movies;"""
 select_upcoming_movies = """SELECT * FROM movies WHERE release_timestamp > ?;"""
 select_watched_movies = """SELECT * FROM movies WHERE watched = 1;"""
-
+update_watch_movie = """UPDATE movies
+                        SET watched = 1
+                        WHERE title = ?"""
 
 
 def create_tables():
     with connection:
         connection.execute(create_movie_table)
 
-def add_movie(title,release_timestamp,watched):
+def add_movie(title,release_timestamp):
     with connection:
-        connection.execute(insert_movies,(title,release_timestamp,watched))
+        connection.execute(insert_movies,(title,release_timestamp))
 
-def get_movies(upcoming = False):
+def get_movies(upcoming=False):
     with connection:
         cursor = connection.cursor()
         if upcoming:
@@ -43,3 +45,8 @@ def get_watched_movies():
         cursor.execute(select_watched_movies)
 
     return cursor.fetchall()
+
+def watch_movie(title):
+    with connection:
+        cursor = connection.cursor()
+        cursor.execute(update_watch_movie,(title,))
